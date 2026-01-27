@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "postman-exporter"
+version = "0.1.1"
+description = ""
+authors = ["Jojo Thomas <jojothomas007@gmail.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.1"
+requests = "^2.32.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
