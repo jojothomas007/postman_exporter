@@ -28,7 +28,7 @@ def main_method():
         export_workspace_list()
     if Config.export_postman_data.lower() == "true":
         workspaces = json.load(open("output/workspace_list.json", "r"))
-        exporter = PostmanExporter()
+        exporter = PostmanExporter(skip_already_exported=Config.skip_already_exported.lower() == "true")
         for ws_id, ws_name in workspaces.items():
             exporter.export_workspace_data(ws_id, ws_name)
         # Save export status to CSV

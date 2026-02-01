@@ -9,9 +9,10 @@ from src.services.postman_service import PostmanService
 class PostmanExporter:
     """Handles the export of Postman data including collections, environments, and global variables."""
     
-    def __init__(self):
+    def __init__(self, skip_already_exported: bool = False):
         self.postman_service = PostmanService()
         self.export_status: List[Dict[str, str]] = []
+        self.skip_already_exported = skip_already_exported
     
     def export_global_variables(self, workspace_id: str, workspace_name: str) -> None:
         """Export global variables from a workspace.
@@ -20,12 +21,25 @@ class PostmanExporter:
             workspace_id: The ID of the workspace
             workspace_name: The name of the workspace
         """
+        filename = os.path.join("output", workspace_name, "global_variables.json")
+        
+        # Check if file exists and skip if flag is enabled
+        if self.skip_already_exported and os.path.isfile(filename):
+            print(f"Skipped global variables from workspace {workspace_name} (already exists)")
+            self.export_status.append({
+                "workspace": workspace_name,
+                "name": "Globals",
+                "type": "global_variables",
+                "status": "skipped",
+                "export_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            })
+            return
+        
         try:
             response = self.postman_service.get_global_variables(workspace_id)
             global_variables_details = response.json()
             global_variables_details["name"] = "Globals"
             global_variables_details["id"] = "sampleid"
-            filename = os.path.join("output", workspace_name, "global_variables.json")
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, "w") as f:
                 json.dump(global_variables_details, f, indent=2)
@@ -56,12 +70,25 @@ class PostmanExporter:
         """
         for collection in collections:
             col_name = collection.get("name", "Unknown")
+            filename = os.path.join("output", workspace_name, "collections", f"{col_name}.json")
+            
+            # Check if file exists and skip if flag is enabled
+            if self.skip_already_exported and os.path.isfile(filename):
+                print(f"Skipped collection {col_name} from workspace {workspace_name} (already exists)")
+                self.export_status.append({
+                    "workspace": workspace_name,
+                    "name": col_name,
+                    "type": "collection",
+                    "status": "skipped",
+                    "export_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                })
+                continue
+            
             try:
                 col_id = collection["uid"]
                 print(f"importing collection name : {col_name}")
                 response = self.postman_service.get_collection(col_id)
                 col_detail = response.json().get("collection", {})
-                filename = os.path.join("output", workspace_name, "collections", f"{col_name}.json")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as f:
                     json.dump(col_detail, f, indent=2)
@@ -92,12 +119,25 @@ class PostmanExporter:
         """
         for environment in environments:
             env_name = environment.get("name", "Unknown")
+            filename = os.path.join("output", workspace_name, "environments", f"{env_name}.json")
+            
+            # Check if file exists and skip if flag is enabled
+            if self.skip_already_exported and os.path.isfile(filename):
+                print(f"Skipped environment {env_name} from workspace {workspace_name} (already exists)")
+                self.export_status.append({
+                    "workspace": workspace_name,
+                    "name": env_name,
+                    "type": "environment",
+                    "status": "skipped",
+                    "export_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                })
+                continue
+            
             try:
                 env_id = environment["uid"]
                 print(f"importing environment name : {env_name}")
                 response = self.postman_service.get_environment(env_id)
                 env_detail = response.json().get("environment", {})
-                filename = os.path.join("output", workspace_name, "environments", f"{env_name}.json")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as f:
                     json.dump(env_detail, f, indent=2)
@@ -170,6 +210,7 @@ class PostmanExporter:
         # Print summary
         total = len(self.export_status)
         success = sum(1 for item in self.export_status if item["status"] == "success")
-        failed = total - success
-        print(f"\nExport Summary: {success} successful, {failed} failed out of {total} total items")
+        failed = sum(1 for item in self.export_status if item["status"] == "failed")
+        skipped = sum(1 for item in self.export_status if item["status"] == "skipped")
+        print(f"\nExport Summary: {success} successful, {failed} failed, {skipped} skipped out of {total} total items")
 
