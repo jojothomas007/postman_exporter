@@ -51,3 +51,8 @@ class PostmanService:
         response = self.request_sender.get_request(request_url, self.headers, None)
         return response
     
+    def get_global_variables(self, workspaceId:str) -> requests.Response:
+        request_url = f"{self.postman_api_url}/workspaces/{workspaceId}/global-variables"
+        response = self.request_sender.get_request(request_url, self.headers, None)
+        return response
+    
