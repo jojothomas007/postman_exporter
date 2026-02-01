@@ -36,8 +36,8 @@ class PostmanExporter:
             collections: List of collection metadata
             workspace_name: The name of the workspace
         """
-        try:
-            for collection in collections:
+        for collection in collections:
+            try:
                 col_id, col_name = collection["uid"], collection["name"]
                 print(f"importing collection name : {col_name}")
                 response = self.postman_service.get_collection(col_id)
@@ -47,8 +47,8 @@ class PostmanExporter:
                 with open(filename, "w") as f:
                     json.dump(col_detail, f, indent=2)
                 print(f"Exported {col_name} from workspace {workspace_name}")
-        except Exception as e:
-            print(f"Error exporting collection {col_name} from workspace {workspace_name}: {e}")
+            except Exception as e:
+                print(f"Error exporting collection {col_name} from workspace {workspace_name}: {e}")
     
     def export_environments(self, environments: list, workspace_name: str) -> None:
         """Export environments from a workspace.
@@ -57,8 +57,8 @@ class PostmanExporter:
             environments: List of environment metadata
             workspace_name: The name of the workspace
         """
-        try:
-            for environment in environments:
+        for environment in environments:
+            try:
                 env_id, env_name = environment["uid"], environment["name"]
                 print(f"importing environment name : {env_name}")
                 response = self.postman_service.get_environment(env_id)
@@ -68,8 +68,8 @@ class PostmanExporter:
                 with open(filename, "w") as f:
                     json.dump(env_detail, f, indent=2)
                 print(f"Exported {env_name} from workspace {workspace_name}")
-        except Exception as e:
-            print(f"Error exporting environment {env_name} from workspace {workspace_name}: {e}")
+            except Exception as e:
+                print(f"Error exporting environment {env_name} from workspace {workspace_name}: {e}")
     
     def export_workspace_data(self, workspace_id: str, workspace_name: str) -> None:
         """Export all data from a single workspace.
