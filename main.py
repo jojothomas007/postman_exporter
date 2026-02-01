@@ -21,25 +21,18 @@ def export_workspace_list():
         ws_list_json[ws_id] = ws_name
     json.dump(ws_list_json, open("output/workspace_list.json", "w"), indent=2)
     print(f"Exported workspace list")
-        
-def export_postman_data(workspaces: dict):
-    """Export data from all workspaces.
-    
-    Args:
-        workspaces: Dictionary mapping workspace IDs to workspace names
-    """
-    exporter = PostmanExporter()
-    for ws_id, ws_name in workspaces.items():
-        exporter.export_workspace_data(ws_id, ws_name)
 
-        
 
 def main_method():
     if Config.export_workspace_list.lower() == "true":
         export_workspace_list()
     if Config.export_postman_data.lower() == "true":
         workspaces = json.load(open("output/workspace_list.json", "r"))
-        export_postman_data(workspaces)
+        exporter = PostmanExporter()
+        for ws_id, ws_name in workspaces.items():
+            exporter.export_workspace_data(ws_id, ws_name)
+        # Save export status to CSV
+        exporter.save_status_to_csv()
 
 
 if __name__ == "__main__":
