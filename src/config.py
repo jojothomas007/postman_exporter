@@ -11,4 +11,6 @@ class Config:
     export_workspace_list: str = os.environ.get("export_workspace_list", "false")
     export_postman_data: str = os.environ.get("export_postman_data", "false")
     skip_already_exported: str = os.environ.get("skip_already_exported", "false")
+    import_global_variables_to_bruno: str = os.environ.get("import_global_variables_to_bruno", "false")
+    bruno_workspace_folder: str = os.environ.get("bruno_workspace_folder")
 

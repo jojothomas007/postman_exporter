@@ -6,6 +6,7 @@ import os
 from src.config import Config
 from src.services.postman_service import PostmanService
 from src.services.exporter import PostmanExporter
+from src.services.bruno_refactor_service import BrunoRefactorService
 # Set up logging
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
@@ -33,6 +34,11 @@ def main_method():
             exporter.export_workspace_data(ws_id, ws_name)
         # Save export status to CSV
         exporter.save_status_to_csv()
+    if Config.import_global_variables_to_bruno.lower() == "true":
+        workspaces = json.load(open("output/workspace_list.json", "r"))
+        brunoRefactorService = BrunoRefactorService()
+        for ws_id, ws_name in workspaces.items():
+            brunoRefactorService.import_global_variables(ws_name)
 
 
 if __name__ == "__main__":
