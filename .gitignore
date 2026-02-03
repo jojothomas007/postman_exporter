@@ -8,6 +8,8 @@ __pycache__/
 
 #output
 output/
+bruno_workspaces/
+validation_report.csv
 
 # Distribution / packaging
 .Python

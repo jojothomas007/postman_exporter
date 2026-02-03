@@ -10,6 +10,13 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "validate_migration",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "validate_migration.py",
+            "console": "integratedTerminal"
         }
     ]
 }

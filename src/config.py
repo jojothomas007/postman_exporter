@@ -13,4 +13,5 @@ class Config:
     skip_already_exported: str = os.environ.get("skip_already_exported", "false")
     import_global_variables_to_bruno: str = os.environ.get("import_global_variables_to_bruno", "false")
     bruno_workspace_folder: str = os.environ.get("bruno_workspace_folder")
-
+    postman_export_folder: str = os.environ.get("postman_export_folder")
+    validation_workspace: str = os.environ.get("validation_workspace")
